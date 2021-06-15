@@ -1,4 +1,4 @@
-
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -15,6 +15,7 @@ if(url=="https://ps.btl.gov.il/#/login"):
 
 
 driver =webdriver.Chrome(ChromeDriverManager().install())
+driver.maximize_window()
 driver.get(url)
 if(url=="https://yedion.jce.ac.il/yedion/fireflyweb.aspx"):
     element = driver.find_element_by_xpath("//input[@id='R1C1']")
@@ -51,16 +52,27 @@ if(url=="https://www.facebook.com"):
     element.send_keys("פוסטים")
     element.send_keys(Keys.RETURN)
 
-    # element = driver.find_element_by_partial_link_text("ח")
-    # element.click()
 
-    # element=driver.find_element_by_xpath("//div[@class='ow4ym5g4 auili1gw rq0escxv j83agx80 buofh1pr g5gj957u i1fnvgqd oygrvhab cxmmr5t8 hcukyx3x kvgmc6g5 nnctdnn4 hpfvmrgz qt6c0cv9 jb3vyjys l9j0dhe7 du4w35lb bp9cbjyn btwxx1t3 dflh9lhu scb9dxdr']")
+    time.sleep(10)
+    element=driver.find_element_by_partial_link_text("פוסטים")
     # element.click()
+    webdriver.ActionChains(driver).move_to_element(element).click(element).perform()
 
-    # driver.get("https://www.facebook.com/search/posts/?q=%D7%A4%D7%95%D7%A1%D7%98%D7%99%D7%9D")
+    time.sleep(10)
 
-    # element=driver.find_element_by_xpath("//div[@data-visualcompletion='ignore-dynamic']")#//div[@class='qzhwtbm6 knvmm38d']
-    # element.click()
+    str="שבוע טוב"
+    element = driver.find_elements_by_xpath("//span[@class='a8c37x1j ni8dbmo4 stjgntxs l9j0dhe7']")
+    for el in element:
+        if str in el.text:
+            print(el.text)
+            el.click()
+
+
+# a8c37x1j ni8dbmo4 stjgntxs l9j0dhe7
+# d2edcug0 hpfvmrgz qv66sw1b c1et5uql lr9zc1uh jq4qci2q a3bd9o3v knj5qynh m9osqain
+
+
+
 
 
 
@@ -76,7 +88,19 @@ if(url=="https://ps.btl.gov.il/#/login"):
     e.click()
     # element = driver.find_element_by_partial_link_text("גבייה")
     # element.click()
-    # element = driver.find_element_by_partial_link_text("אישורים")
+    time.sleep(5)
+    element = driver.find_element_by_partial_link_text("אישורים")
+    element.click()
+    time.sleep(2)
+    element=driver.find_elements_by_tag_name("button")
+    print(len(element))
+    element[15].click()
+    time.sleep(10)
+    element = driver.find_element_by_id("download")
+    element.click()
+    # element=driver.find_element_by_css_selector('button.btn btn-default')
+    # element.click()
+    # element = driver.find_element_by_partial_link_text("לחץ להצגת המסמך אישור על מעמד לא עובד")
     # element.click()
     # e=driver.find_element_by_id("topNav_1")
     # e.click()
