@@ -94,6 +94,23 @@ def Take_input():
             #     Output.insert(END, el.text)
             #     Output.tag_add("right", "1.0", "end")
 
+        data = regex.findall(r'\X', liststr[0])
+        for word in data:
+            if any(char in emoji.UNICODE_EMOJI for char in word):
+                # emoji_counter += 1
+                # Remove from the given text the emojis
+                liststr[0] = liststr[0].replace(word, '')
+
+                # print(str.split('.')[0])#if there is numbers or icons
+            Output.insert(END, liststr[0])
+
+        #     Output.insert(END, "\n")
+        #     Output.tag_add("right", "1.0", "end")
+        # print(element[1].text)
+        # Output.insert(END, element[1].text)
+
+
+
 
         # actions = webdriver.ActionChains(driver)
         # for i in range(1):#53 down
