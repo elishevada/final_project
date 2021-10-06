@@ -233,7 +233,6 @@ inputtxt = Text(root, height=3,
                 width=100,
                 bg="light yellow")
 inputtxt.grid(row=2, column=0, columnspan=10, sticky='NESW')
-inputtxt.insert(END,"0504380777")
 l1 = Label(text="password")
 l1.grid(row=3, column=0, columnspan=10, sticky='NESW')
 # inputtxt1 = Text(root, height=3,
@@ -241,7 +240,6 @@ l1.grid(row=3, column=0, columnspan=10, sticky='NESW')
 #                 bg="light yellow")
 inputtxt1 = Entry(root, show="*", width=15)
 inputtxt1.grid(row=4, column=0, columnspan=10, sticky='NESW')
-inputtxt1.insert(END,"judge444")
 l2 = Label(text="what do you looking for?")
 l2.grid(row=5, column=0, columnspan=10, sticky='NESW')
 inputtxt2 = Text(root, height=3,
