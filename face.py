@@ -218,6 +218,10 @@ def Take_input():
         #         Output.tag_add("right", "1.0", "end")
 
 
+def start_thread():
+    x.start()
+
+x = threading.Thread(target=Take_input)
 
 for i in range(10):
     root.rowconfigure(i, weight=1)
@@ -258,7 +262,7 @@ inputtxt2.grid(row=6, column=0, columnspan=10, sticky='NESW')
 Display = Button(root, height=2,
                  width=20,
                  text="Show",
-                 command=lambda: Take_input())
+                 command=lambda: start_thread())
 Display.grid(row=7, column=0, columnspan=10, sticky='NESW')
 
 # widget.pack()
