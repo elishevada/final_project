@@ -1,6 +1,7 @@
+import threading
 from tkinter import *
 import time
-
+from tkinter.ttk import Separator
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -11,13 +12,11 @@ import webbrowser
 # from functools import partial
 
 root = Tk()
-root.wm_attributes("-topmost", 1)
+# root.wm_attributes("-topmost", 1)
+
 # w, h = root.winfo_screenwidth(), root.winfo_screenheight()
 # root.geometry("%dx%d+0+0" % (w, h))
 root.title(" automation ")
-str="sof.iaa. muznacha"
-print(type(str))
-print(str.split('.')[0])
 
 def callback(url):
     webbrowser.open_new(url)
@@ -109,7 +108,7 @@ def Take_input():
         for el in element:
             if (len(el.text)>20):
                 el.click()
-                # time.sleep(2)
+                time.sleep(2)
                 postLink=driver.current_url
                 driver.back()
                 print(postLink)
@@ -146,7 +145,7 @@ def Take_input():
 
         set.configure(font='fangsongti')
         set.tag_configure("right", justify='right')
-        set.grid(column=0, row=8, sticky='NESW')
+        set.grid(column=0, row=9, sticky='NESW')
         set.insert(END, liststr[0])
 
         set2 = Text(root, height=5,
@@ -155,14 +154,16 @@ def Take_input():
 
         set2.configure(font='fangsongti')
         set2.tag_configure("right", justify='right')
-        set2.grid(column=1, row=8, sticky='NESW')
+        set2.grid(column=1, row=9, sticky='NESW')
         set2.insert(END, listdate[0])
 
         set3 =Label(root, text="link to post", fg="blue", cursor="hand2")
 
         set3.configure(font='fangsongti')
         # set3.tag_configure("right", justify='right')
-        set3.grid(column=2, row=8, sticky='NESW')
+        set3.grid(column=2, row=9[
+            []
+        ], sticky='NESW')
         set3.bind("<Button-1>", lambda e: callback(postLink))
 
 
@@ -191,13 +192,13 @@ def Take_input():
 
         set4.configure(font='fangsongti')
         set4.tag_configure("right", justify='right')
-        set4.grid(column=3, row=8, sticky='NESW')
+        set4.grid(column=3, row=9, sticky='NESW')
         set4.insert(END, element[0].text)
 
         comments = Text(root, height=10,
                          width=10,
                          bg="light yellow")
-        comments.grid(row=8, column=4, sticky='NESW')
+        comments.grid(row=9, column=4, sticky='NESW')
 
             # if str in el.text:
             #     print(el.text)
@@ -217,12 +218,16 @@ def Take_input():
         #         Output.insert(END, el.text)
         #         Output.tag_add("right", "1.0", "end")
 
-
 def start_thread():
-    x.start()
+    if(x.isAlive()==True):
+        x.join()
+        print("thread still alive")
+    else:
+        x.start()
+def print_hi():
+    print("hi")
 
 x = threading.Thread(target=Take_input)
-
 for i in range(10):
     root.rowconfigure(i, weight=1)
     root.columnconfigure(i, weight=1)
@@ -237,6 +242,7 @@ inputtxt = Text(root, height=3,
                 width=100,
                 bg="light yellow")
 inputtxt.grid(row=2, column=0, columnspan=10, sticky='NESW')
+inputtxt.insert(END,"0504380777")
 l1 = Label(text="password")
 l1.grid(row=3, column=0, columnspan=10, sticky='NESW')
 # inputtxt1 = Text(root, height=3,
@@ -244,6 +250,7 @@ l1.grid(row=3, column=0, columnspan=10, sticky='NESW')
 #                 bg="light yellow")
 inputtxt1 = Entry(root, show="*", width=15)
 inputtxt1.grid(row=4, column=0, columnspan=10, sticky='NESW')
+inputtxt1.insert(END,"judge444")
 l2 = Label(text="what do you looking for?")
 l2.grid(row=5, column=0, columnspan=10, sticky='NESW')
 inputtxt2 = Text(root, height=3,
@@ -264,6 +271,35 @@ Display = Button(root, height=2,
                  text="Show",
                  command=lambda: start_thread())
 Display.grid(row=7, column=0, columnspan=10, sticky='NESW')
+l3 = Label(text="תוכן פוסט")
+l3.grid(row=8, column=0, sticky='NESW')
+
+# separator1 = Separator(root, orient='vertical')
+# separator1.grid(row=8, column=1, sticky='NESW')
+
+l4 = Label(text="תאריך פוסט")
+l4.grid(row=8, column=1, sticky='NESW')
+
+# separator2 = Separator(root, orient='vertical')
+# separator2.grid(row=8, column=3, sticky='NESW')
+
+l5 = Label(text="כותב הפוסט")
+l5.grid(row=8, column=2, sticky='NESW')
+
+# separator3 =Separator(root, orient='vertical')
+# separator3.grid(row=8, column=5, sticky='NESW')
+
+l6 = Label(text="הערות לפוסט")
+l6.grid(row=8, column=3, sticky='NESW')
+
+# separator4 =Separator(root, orient='vertical')
+# separator4.grid(row=8, column=7, sticky='NESW')
+
+save_comment=Button(root,height=2,
+                 width=20,
+                 text="save",
+                 command=lambda: print_hi())
+save_comment.grid(row=8,column=4,sticky='NESW')
 
 # widget.pack()
 # lfirst.pack()
