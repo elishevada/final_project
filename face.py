@@ -38,7 +38,7 @@ class StartPage(Tk):
                         width=100,
                         bg="light yellow")
         inputtxt.grid(row=2, column=0, columnspan=10, sticky='NESW')
-        inputtxt.insert(END, "שם משתמש שורה 111")
+        inputtxt.insert(END, "0504380777")
         l1 = Label(text="password")
         l1.grid(row=3, column=0, columnspan=10, sticky='NESW')
         # inputtxt1 = Text(root, height=3,
@@ -46,7 +46,7 @@ class StartPage(Tk):
         #                 bg="light yellow")
         inputtxt1 = Entry(root, show="*", width=15)
         inputtxt1.grid(row=4, column=0, columnspan=10, sticky='NESW')
-        inputtxt1.insert(END, "סיסמא שורה 111")
+        inputtxt1.insert(END, "judge444")
         l2 = Label(text="what do you looking for?")
         l2.grid(row=5, column=0, columnspan=10, sticky='NESW')
         inputtxt2 = Text(root, height=3,
@@ -108,7 +108,7 @@ class StartPage(Tk):
         # user_name = inputtxt.get("1.0", "end")
         # password = inputtxt1.get("1.0", "end")
         # hashtag = inputtxt2.get("1.0", "end")
-        x = threading.Thread(target=GetUserInfo, args=("שם משתמש שורה 111", "סיסמא שורה 111", "שולחן", 3))
+        x = threading.Thread(target=GetUserInfo, args=("0504380777", "judge444", "שולחן", 3))
         Display = Button(root, height=2,
                          width=20,
                          text="Show",
@@ -171,10 +171,11 @@ class store_post_information(Tk):
         posts_content = []
         posts_picture = []
         posts_Links = []
-        content=" "
+
         i = 0
         for post in posts:
-            if (i < 5):
+            content = " "
+            if (i < 3):
                 # post.click()
                 driver.get(post)
                 time.sleep(1)
@@ -186,20 +187,15 @@ class store_post_information(Tk):
                 #                       posts_links_of_pic]  # get the list of all the link for the images in a post
                 # posts_picture.append(posts_links_of_pic)
                 # print(posts_picture[i])
-                dateTag=driver.find_elements_by_tag_name('b')
-                print(len(dateTag))
-                dateTag=[elem.get_attribute('class') for elem in dateTag
-                         if "tw7WN7f" not in elem.get_attribute("class")]
-                print(dateTag)
-                # date=driver.find_element_by_xpath("//b[@class='b6zbclly myohyog2 l9j0dhe7 aenfhxwr l94mrbxd ihxqhq3m nc684nl6 t5a262vz sdhka5h4 ']/b[@class='b6zbclly myohyog2 l9j0dhe7 aenfhxwr l94mrbxd ihxqhq3m nc684nl6 t5a262vz sdhka5h4 ' and style='display: inline;']")
-                # print(date.text)
-                # posts_date.append(driver.find_element_by_xpath("//span[@class='j1lvzwm4 stjgntxs ni8dbmo4 q9uorilb gpro0wi8']").text)
-                # print(posts_date[i])
-                # date=driver.find_element_by_tag_name('a')
-                # date=date.get_attribute('aria-label')
-                # print(date)
-                # posts_content.append(driver.find_element_by_xpath(
-                #     "//span[@class='d2edcug0 hpfvmrgz qv66sw1b c1et5uql lr9zc1uh a8c37x1j keod5gw0 nxhoafnm aigsh9s9 d3f4x2em fe6kdd0r mau55g9w c8b282yb iv3no6db jq4qci2q a3bd9o3v b1v8xokw oo9gr5id hzawbc8m']"))
+                dateTags=driver.find_elements_by_xpath("//b[@class='b6zbclly myohyog2 l9j0dhe7 aenfhxwr l94mrbxd ihxqhq3m nc684nl6 t5a262vz sdhka5h4 ']/b")
+                print(len(dateTags))
+                for tag in dateTags:
+                    if "nw7WN7Z" not in tag.get_attribute("class"):
+                        date=tag.text
+                        break
+                posts_date.append(date)
+                print(posts_date[0])
+
                 allPostContent=driver.find_elements_by_xpath("//div[@class='kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x c1et5uql ii04i59q']/div[@dir='auto']")
                 for sentence in allPostContent:
                     content=content+sentence.text
@@ -210,7 +206,7 @@ class store_post_information(Tk):
                 time.sleep(1)
                 i = i + 1
 
-        print(posts_Links[0]+","+posts_content[0])#+ posts_picture[0]+","+posts_date[0]+","
+        # print(posts_Links[0]+","+posts_content[0])#+ posts_picture[0]+","+posts_date[0]+","
         # except Exception:
         #     messagebox.showwarning("Error", "we couldnd click the post")
 
