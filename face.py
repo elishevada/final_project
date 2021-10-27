@@ -108,7 +108,7 @@ class StartPage(Tk):
         # user_name = inputtxt.get("1.0", "end")
         # password = inputtxt1.get("1.0", "end")
         # hashtag = inputtxt2.get("1.0", "end")
-        x = threading.Thread(target=GetUserInfo, args=("0504380777", "judge444", "שולחן", 3))
+        x = threading.Thread(target=GetUserInfo, args=("user", "pass", "שולחן", 3))
         Display = Button(root, height=2,
                          width=20,
                          text="Show",
