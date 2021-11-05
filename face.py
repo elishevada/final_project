@@ -118,7 +118,11 @@ class StartPage(Tk):
         # password = inputtxt1.get("1.0", "end")
         # hashtag = inputtxt2.get("1.0", "end")
 
+<<<<<<< HEAD
         x = threading.Thread(target=GetUserInfo, args=("user", "pass", "מצלמות ילדים", 3,had_loged))
+=======
+        x = threading.Thread(target=GetUserInfo, args=("", "", " ",had_loged))
+>>>>>>> 25c7e85213ddb76ea817c672d1923d518df2536a
 
         Display = Button(root, height=2,
                          width=20,
@@ -277,6 +281,7 @@ class store_post_information(Tk):
         for i in range(9,num_of_posts+9):
 
             while(colum<4):
+<<<<<<< HEAD
                 if(colum==0):
 
                     set3 =Label(root, text="קישור לפוסט", fg="blue", cursor="hand2",bg="light cyan")
@@ -296,6 +301,16 @@ class store_post_information(Tk):
                     set.insert(END, posts_details[colum][i-9])
 
 
+=======
+                set = Text(root, height=5,
+                           width=20,
+                           bg="light cyan")
+
+                set.configure(font='fangsongti')
+                set.tag_configure("right", justify='right')
+                set.grid(column=colum, row=i, sticky='NESW')
+                set.insert(END, posts_details[colum][i-9])
+>>>>>>> 25c7e85213ddb76ea817c672d1923d518df2536a
                 colum+=1
             colum = 0
 
@@ -346,6 +361,7 @@ def GetUserInfo(username, password, search_topic_recieved, numberofpost,had_loge
 
 if __name__ == "__main__":
     print("Run from main")
+<<<<<<< HEAD
     # conn = sqlite3.connect('test2.db')
     #
     # # conn.execute('''CREATE TABLE COMPANY
@@ -367,6 +383,9 @@ if __name__ == "__main__":
     #
     #
     # conn.close()
+=======
+    
+>>>>>>> 25c7e85213ddb76ea817c672d1923d518df2536a
 
     root = Tk()
     Start = StartPage(root)
