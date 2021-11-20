@@ -28,9 +28,10 @@ class NewUserStart(Tk):
 
         loadimage = PhotoImage(file="arrow.png")
         roundedbutton = Button(ws, image=loadimage, bg="white", borderwidth=0, bd=0, text="back",
-                               command=lambda: ws.destroy)
+                               command=lambda: backPageExistUser())
+        roundedbutton.image=loadimage
         tooltip.CreateToolTip(roundedbutton, text='Go back')
-        roundedbutton.place(relx=0.01, rely=0.02, relwidth=0.06,
+        roundedbutton.place(relx=0.03, rely=0.02, relwidth=0.07,
                             relheight=0.09,anchor="n")
 
         title=Label(
@@ -90,13 +91,13 @@ class NewUserStart(Tk):
 
 
 def GoToPosts(username,password):
-    FS = login.store_post_information(username, password)
+    FS = login.login_facebook(username, password)
     # FS = login.store_post_information("0504380777", "judge444")
     FS.login()
     if(FS.check_validation()):
         #insert to database the username and password
         try:
-            conn = sqlite3.connect('postManagment.db')
+            conn = sqlite3.connect('projectManagment.db')
             conn.execute("INSERT INTO users (UserName,Password) VALUES (?,?)",(username,password));
             conn.commit()
             conn.close()
@@ -147,11 +148,11 @@ def nextlable():
 
 if __name__ == "__main__":
     print("Run from main")
-    conn = sqlite3.connect('postManagment.db')
+    conn = sqlite3.connect('projectManagment.db')
     # conn.execute("INSERT INTO users (UserName,Password) VALUES (?,?)",(user,r));
     # conn.execute("DELETE FROM users  WHERE UserName='050438000777'");
     # conn.commit()
-    # conn = sqlite3.connect('postManagment.db')
+    # conn = sqlite3.connect('projectManagment.db')
     cursor = conn.execute("SELECT * from users")
     print(cursor.fetchall())
 
@@ -185,17 +186,25 @@ if __name__ == "__main__":
 
 
     ws=Tk()
+    p1 = PhotoImage(file='facebook_icon.png')
+
+    # Setting icon of master window
+    ws.iconphoto(False, p1)
     Start = NewUserStart(ws)
 
     ws.mainloop()
 else:
     print("Run from import")
-    conn = sqlite3.connect('postManagment.db')
+    conn = sqlite3.connect('projectManagment.db')
     cursor = conn.execute("SELECT * from users")
     print(cursor.fetchall())
     conn.close()
 
     ws = Tk()
+    p1 = PhotoImage(file='facebook_icon.png')
+
+    # Setting icon of master window
+    ws.iconphoto(False, p1)
     Start = NewUserStart(ws)
 
     ws.mainloop()

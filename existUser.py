@@ -61,7 +61,7 @@ class ExistUserStart(Tk):
 
 
         Username = Entry(UsernameFrame, font=40, justify="right")
-        Username.insert(0, "שם משתמש")
+        Username.insert(0, "0504380777")#שם משתמש
         Username.place(relwidth=1, relheight=1)
         Username.focus()
 
@@ -95,46 +95,55 @@ class ExistUserStart(Tk):
         label = Label(ws, text = "Created by elishevada © 2021", font = 13, bg = "white", fg = "black")
         label.place(relx = 0.5, rely = 0.93, anchor = "n")
 
-def delete_user():
-    label = Label(ws, text="delete for:", font=13, bg="white", fg="black")
-    label.place(relx=0.1, rely=0.01, anchor="n")
 
-    UsernameFrame = Frame(ws, bg="lightgrey", bd=1)
-    UsernameFrame.place(relx=0.3, rely=0.01,relwidth=0.3, relheight=0.05, anchor="n")
+def delete_user():
+    UsernameFrame = Frame(ws, bg="white", bd=1)
+    UsernameFrame.place(relx=0.15, rely=0.01,relwidth=0.3, relheight=0.05, anchor="n")
     Username = Entry(UsernameFrame, font=40, justify="right")
+    Username.insert(0, "שם משתמש למחיקה")
     Username.place(relwidth=1, relheight=1)
+
     Username.focus()
 
     button = Button(ws, text="מחק", bg="lightblue",
-                    command=lambda: deleteFor(Username.get()))
+                    command=lambda: deleteFor(Username.get(),Username,button,button2))
 
-    button.place(relx=0.5, rely=0.01, relwidth=0.1,
+    button.place(relx=0.36, rely=0.01, relwidth=0.1,
                  relheight=0.05, anchor="n")
 
+    button2 = Button(ws, text="ביטול", bg="lightblue",
+                     command=lambda: remove(Username, button, button2))
+    button2.place(relx=0.469, rely=0.01, relwidth=0.1,
+                     relheight=0.05, anchor="n")
 
-def deleteFor(userToDelete):
+def deleteFor(userToDelete,w1,w2,w3):
     try:
-        conn = sqlite3.connect('postManagment.db')
+        conn = sqlite3.connect('projectManagment.db')
         cursor=conn.execute(f"SELECT * FROM users  WHERE UserName='{userToDelete}'");#for checking bcs the delete doesnt returns error if not exist
         cursor.fetchone()[0]
         conn.execute(f"DELETE from users WHERE UserName = '{userToDelete}'");
 
         conn.commit()
         conn.close()
-        Start = ExistUserStart(ws)
+        remove(w1, w2, w3)
+
     except:
         messagebox.showwarning("this user doesnt exist for delete")
 
 
-
+def remove(widget1, widget2,widget3):
+    widget1.place_forget()
+    widget2.place_forget()
+    widget3.place_forget()
 
 def GoToPosts(user):
 
     try:
-        conn = sqlite3.connect('postManagment.db')
+        conn = sqlite3.connect('projectManagment.db')
         cursor=conn.execute(f"SELECT Password FROM users  WHERE UserName='{user}'");
-        userPass.setPass(user)
-        userPass.setUser(cursor.fetchone()[0])
+        userPass.setPass(cursor.fetchone()[0])
+        userPass.setUser(user)
+        conn.close()#added didnt check
         ws.destroy()
         import postManagement
     except:
@@ -148,25 +157,54 @@ def nextPageNewUser():
     ws.destroy()
     import newUser
 
-
+def disable_event():
+    pass
 
 if __name__ == "__main__":
+
+    us="0504380777"
+    ps="judge444"
     print("Run from main")
-    conn = sqlite3.connect('postManagment.db')
-    # conn.execute("INSERT INTO users (UserName,Password) VALUES (?,?)",(user,r));
+    conn = sqlite3.connect('projectManagment.db')
+    # conn.execute('''CREATE TABLE topics
+    #                  (UserName TEXT,
+    #                  topic   TEXT );''')
+    # conn.execute('''CREATE TABLE posts
+    #                  (
+    #                  username           TEXT     NOT NULL,
+    #                  subject            TEXT     NOT NULL,
+    #                  link        TEXT PRIMARY KEY,
+    #                  writer         TEXT,
+    #                  date TEXT ,
+    #                  content TEXT,
+    #                  comment TEXT);''')
+    # conn.execute('''CREATE TABLE users
+    #                  (UserName TEXT PRIMARY KEY ,
+    #                  Password           TEXT );''')
+    # conn.execute("INSERT INTO users (UserName,Password) VALUES (?,?)",(us,ps));
     # conn.execute("DELETE FROM users  WHERE UserName='050438000777'");
     # conn.commit()
-    # conn = sqlite3.connect('postManagment.db')
-    cursor = conn.execute("SELECT * from users")
-    print(cursor.fetchall())
+    # cursor = conn.execute("SELECT * from posts")
+    # print(cursor.fetchall())
+    # cursor = conn.execute("SELECT * from users")
+    # print(cursor.fetchall())
 
     conn.close()
 
     ws=Tk()
+    # ws.protocol("WM_DELETE_WINDOW", disable_event)#----------important disable the window close with x ontop so we mannage the close program
+    p1 = PhotoImage(file='facebook_icon.png')
+
+    # Setting icon of master window
+    ws.iconphoto(False, p1)
     Start = ExistUserStart(ws)
     ws.mainloop()
 else:
     print("Run from import")
     ws = Tk()
+    p1 = PhotoImage(file='facebook_icon.png')
+
+    # Setting icon of master window
+    ws.iconphoto(False, p1)
     Start = ExistUserStart(ws)
     ws.mainloop()
