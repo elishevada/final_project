@@ -1,6 +1,7 @@
 import sqlite3
 import threading
 import time
+import webbrowser
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
@@ -17,7 +18,7 @@ class NewUserStart(Tk):
     def __init__(self,ws):
         # ws = Tk()
         # ws.geometry('400x300')
-        ws.title('WA-newUser')
+        ws.title('WA-משתמש חדש')
 
         canvas = Canvas(ws, height=700, width=1000)
         canvas.pack()
@@ -26,17 +27,17 @@ class NewUserStart(Tk):
         MainFrame.place(relwidth=1, relheight=1)
 
 
-        loadimage = PhotoImage(file="arrow.png")
+        loadimage = PhotoImage(file="images/arrow.png")
         roundedbutton = Button(ws, image=loadimage, bg="white", borderwidth=0, bd=0, text="back",
                                command=lambda: backPageExistUser())
         roundedbutton.image=loadimage
-        tooltip.CreateToolTip(roundedbutton, text='Go back')
+        tooltip.CreateToolTip(roundedbutton, text='חזור')
         roundedbutton.place(relx=0.03, rely=0.02, relwidth=0.07,
                             relheight=0.09,anchor="n")
 
         title=Label(
             ws,
-            text="''WA-ברוכים הבאים לאתר''",
+            text="Post-Save ברוכים הבאים ל ",
             fg="black",
             bg="white",
             font=40
@@ -86,36 +87,65 @@ class NewUserStart(Tk):
                      relheight=0.05, anchor="n")
 
         label = Label(ws, text = "Created by elishevada © 2021", font = 13, bg = "white", fg = "black")
-        label.place(relx = 0.5, rely = 0.93, anchor = "n")
+        label.place(relx = 0.47, rely = 0.93, anchor = "n")
+
+        img = PhotoImage(file="images/git.png")
+        linkGit = Button(ws, image=img, bg="white", borderwidth=0,
+                      command=lambda :webbrowser.open_new("https://github.com/elishevada/final_project"))
+        linkGit.image = img
+        tooltip.CreateToolTip(linkGit, text='GitHub')
+        linkGit.place(relx = 0.627, rely = 0.915, anchor="n")
 
 
 
 def GoToPosts(username,password):
+    try:#try to insert to table if yes so its doesnt exist so  we delete because we need to  check in facebook if valid
+        conn = sqlite3.connect('images/projectManagment.db')
+        conn.execute("INSERT INTO users (UserName,Password,Name) VALUES (?,?,?)", (username, password, "try"));
+        conn.commit()
+        # check if deleted
+        # cursor = conn.execute("SELECT * from users")
+        # print(cursor.fetchall())
+        conn.execute(f"DELETE from users WHERE UserName = '{username}'");
+        conn.commit()
+        #check if deleted
+        # cursor = conn.execute("SELECT * from users")
+        # print(cursor.fetchall())
+        conn.close()
+    except:
+        messagebox.showwarning("this user already exists pls go to  exist user")
+        lablePopup("המשתמש קיים חזור לעמוד קודם ", "back")
+        return
+
+
+
+
     FS = login.login_facebook(username, password)
-    # FS = login.store_post_information("0504380777", "judge444")
+
     FS.login()
-    if(FS.check_validation()):
+    if(FS.check_validation()):#if its a right user
+        #get the name with selenium
+        name=FS.getName()
         #insert to database the username and password
         try:
-            conn = sqlite3.connect('projectManagment.db')
-            conn.execute("INSERT INTO users (UserName,Password) VALUES (?,?)",(username,password));
+            conn = sqlite3.connect('images/projectManagment.db')
+            conn.execute("INSERT INTO users (UserName,Password,Name) VALUES (?,?,?)",(username,password,name));
             conn.commit()
             conn.close()
             userPass.setPass(password)
             userPass.setUser(username)
+            userPass.setName(name)
             FS.closeBrowser()
             lablePopup(">נרשמת למערכת בהצלחה ,לכניסה "  ,"foward")
 
-        except:
+        except:# ValueError as e print(e)
             FS.closeBrowser()
-            messagebox.showwarning("this user already exists pls go to  exist user")
-            lablePopup("המשתמש קיים חזור לעמוד קודם ","back")
-
-
+            messagebox.showwarning("error","problem to insert user")
+            # lablePopup("המשתמש קיים חזור לעמוד קודם ","back")
 
     else:
         FS.closeBrowser()
-        messagebox.showerror("Error", "password or username are wrong try again")
+        messagebox.showerror("Error", "password or username are wrong try again")#or forbidden
 
 
 
@@ -146,65 +176,14 @@ def nextlable():
     ws.destroy()
     import postManagement
 
-if __name__ == "__main__":
-    print("Run from main")
-    conn = sqlite3.connect('projectManagment.db')
-    # conn.execute("INSERT INTO users (UserName,Password) VALUES (?,?)",(user,r));
-    # conn.execute("DELETE FROM users  WHERE UserName='050438000777'");
-    # conn.commit()
-    # conn = sqlite3.connect('projectManagment.db')
-    cursor = conn.execute("SELECT * from users")
-    print(cursor.fetchall())
+print("Run from main")
 
-    conn.close()
+ws=Tk()
+p1 = PhotoImage(file='images/facebook_icon.png')
+#
+# # Setting icon of master window
+ws.iconphoto(False, p1)
+Start = NewUserStart(ws)
 
-    # conn.execute('''CREATE TABLE users
-    #                  (UserName TEXT PRIMARY KEY ,
-    #                  Password           TEXT );''')
+ws.mainloop()
 
-
-    # conn = sqlite3.connect('test2.db')
-    #
-    # # conn.execute('''CREATE TABLE COMPANY
-    # #          (ID INT PRIMARY KEY     NOT NULL,
-    # #          NAME           TEXT    NOT NULL,
-    # #          AGE            INT     NOT NULL,
-    # #          ADDRESS        CHAR(50),
-    # #          SALARY         REAL);''')
-    # # conn.execute("INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) \
-    # #       VALUES (1, 'Paul', 32, 'California', 20000.00 )");
-    # # conn.commit()
-    # cursor = conn.execute("SELECT * from COMPANY")
-    # print(cursor.fetchall())
-    # # for row in cursor:
-    # #     print("id= ",row[0])
-    # #     print("name= " ,row[1])
-    # #     print("add= " ,row[2])
-    # #     print("sal= ",row[3])
-    #
-    #
-
-
-    ws=Tk()
-    p1 = PhotoImage(file='facebook_icon.png')
-
-    # Setting icon of master window
-    ws.iconphoto(False, p1)
-    Start = NewUserStart(ws)
-
-    ws.mainloop()
-else:
-    print("Run from import")
-    conn = sqlite3.connect('projectManagment.db')
-    cursor = conn.execute("SELECT * from users")
-    print(cursor.fetchall())
-    conn.close()
-
-    ws = Tk()
-    p1 = PhotoImage(file='facebook_icon.png')
-
-    # Setting icon of master window
-    ws.iconphoto(False, p1)
-    Start = NewUserStart(ws)
-
-    ws.mainloop()

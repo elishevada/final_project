@@ -1,12 +1,15 @@
 
 userName=""
 password=""
+Name=""
 
 def getPass():
     return password
 
 def getUser():
     return userName
+def getName():
+    return Name
 
 def setPass(passw):
     global password
@@ -15,4 +18,8 @@ def setPass(passw):
 def setUser(user):
     global userName
     userName=user
+
+def setName(name):
+    global Name
+    Name = name
 
