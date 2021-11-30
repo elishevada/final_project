@@ -14,6 +14,7 @@ import webbrowser
 
 import tooltip
 import userPass
+import data_base_function as db
 
 cameback=False
 
@@ -166,15 +167,8 @@ def deleteUpdateFor(userToDeleteOrUpdate, w1, w2, w3, flag,UpdatePass,w4Update):
         MsgBox = messagebox.askquestion('Delete user', 'Are you sure you want to be deleted warning:all the history will deleted too')
         if MsgBox == "yes":
             try:
-                conn = sqlite3.connect('images/projectManagment.db')
-                conn.execute("PRAGMA foreign_keys = 1")
-                cur = conn.cursor()
-                cursur=cur.execute(f"SELECT * FROM users  WHERE UserName='{userToDeleteOrUpdate}'");#for checking bcs the delete doesnt returns error if not exist
-                cursur.fetchone()[0]
-                cur.execute(f"DELETE from users WHERE UserName = '{userToDeleteOrUpdate}'");
+                db.del_user(userToDeleteOrUpdate)
 
-                conn.commit()
-                conn.close()
                 remove(flag,w1, w2, w3,w4Update)
 
             except:
@@ -184,16 +178,9 @@ def deleteUpdateFor(userToDeleteOrUpdate, w1, w2, w3, flag,UpdatePass,w4Update):
                                         'Are you sure you want to update?')
         if MsgBox == "yes":
             try:
-                conn = sqlite3.connect('images/projectManagment.db')
-                conn.execute("PRAGMA foreign_keys = 1")
-                cur = conn.cursor()
-                cursur = cur.execute(
-                    f"SELECT * FROM users  WHERE UserName='{userToDeleteOrUpdate}'");  # for checking bcs the delete doesnt returns error if not exist
-                cursur.fetchone()[0]
-                cur.execute(f"UPDATE users SET Password='{UpdatePass.get()}' WHERE UserName = '{userToDeleteOrUpdate}'");
+                db.update_pass_user(userToDeleteOrUpdate, UpdatePass.get())
 
-                conn.commit()
-                conn.close()
+
                 remove(flag,w1, w2, w3,w4Update)
 
             except:

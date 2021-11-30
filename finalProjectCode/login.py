@@ -10,7 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 name="default"
 
-class login_facebook():#TK
+class login_facebook():
 
     # Run page
     def __init__(self, username, password):
@@ -46,6 +46,7 @@ class login_facebook():#TK
         global name
         if(self.driver.current_url=="https://www.facebook.com/"):
             try:
+                time.sleep(3)
                 name = self.driver.find_elements_by_xpath(
                     "//span[@class='a8c37x1j ni8dbmo4 stjgntxs l9j0dhe7 ltmttdrg g0qnabr5']")[0].get_attribute(
                     "innerHTML")
@@ -55,7 +56,7 @@ class login_facebook():#TK
         else:
             if(self.driver.current_url=="https://www.facebook.com/?sk=welcome"):#new user in facebook that didnt set his friends
                 self.driver.get("https://www.facebook.com/")
-                # time.sleep(5)
+                time.sleep(3)
                 try:
                     name = self.driver.find_elements_by_xpath(
                         "//span[@class='a8c37x1j ni8dbmo4 stjgntxs l9j0dhe7 ltmttdrg g0qnabr5']")[0].get_attribute("innerHTML")
@@ -77,4 +78,5 @@ class login_facebook():#TK
         print("Browser quit")
 
     def getDriver(self):
+
         return self.driver

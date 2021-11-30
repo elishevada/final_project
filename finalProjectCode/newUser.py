@@ -9,6 +9,7 @@ from tkinter import ttk
 import login
 import tooltip
 import userPass
+import data_base_function as db
 
 
 
@@ -100,18 +101,15 @@ class NewUserStart(Tk):
 
 def GoToPosts(username,password):
     try:#try to insert to table if yes so its doesnt exist so  we delete because we need to  check in facebook if valid
-        conn = sqlite3.connect('images/projectManagment.db')
-        conn.execute("INSERT INTO users (UserName,Password,Name) VALUES (?,?,?)", (username, password, "try"));
-        conn.commit()
-        # check if deleted
-        # cursor = conn.execute("SELECT * from users")
-        # print(cursor.fetchall())
-        conn.execute(f"DELETE from users WHERE UserName = '{username}'");
-        conn.commit()
-        #check if deleted
-        # cursor = conn.execute("SELECT * from users")
-        # print(cursor.fetchall())
-        conn.close()
+        db.insert_user_try(username,password)
+        # conn = sqlite3.connect('images/projectManagment.db')
+        # conn.execute("INSERT INTO users (UserName,Password,Name) VALUES (?,?,?)", (username, password, "try"));
+        # conn.commit()
+        #
+        # conn.execute(f"DELETE from users WHERE UserName = '{username}'");
+        # conn.commit()
+        #
+        # conn.close()
     except:
         messagebox.showwarning("this user already exists pls go to  exist user")
         lablePopup("המשתמש קיים חזור לעמוד קודם ", "back")
@@ -128,10 +126,11 @@ def GoToPosts(username,password):
         name=FS.getName()
         #insert to database the username and password
         try:
-            conn = sqlite3.connect('images/projectManagment.db')
-            conn.execute("INSERT INTO users (UserName,Password,Name) VALUES (?,?,?)",(username,password,name));
-            conn.commit()
-            conn.close()
+            db.insert_user(username, password, name)
+            # conn = sqlite3.connect('images/projectManagment.db')
+            # conn.execute("INSERT INTO users (UserName,Password,Name) VALUES (?,?,?)",(username,password,name));
+            # conn.commit()
+            # conn.close()
             userPass.setPass(password)
             userPass.setUser(username)
             userPass.setName(name)

@@ -2,6 +2,7 @@ import sqlite3
 import threading
 import time
 import webbrowser
+import data_base_function as db
 
 
 from tkinter.ttk import Separator
@@ -247,7 +248,7 @@ class postManager(Tk):
         global num_les_flag
         num_les_flag=False
         # check if the search topic valid
-        if(valid(search_topic)==0):
+        if(db.valid(search_topic)==0):
             # save the search word in the topics table
             add_topic_to_records(search_topic)
 
@@ -308,7 +309,7 @@ class postManager(Tk):
                                 list_classes.append(tag.get_attribute("class"))
 
 
-                            shortest_string = find_min(list_classes)
+                            shortest_string = db.find_min(list_classes)
                             print(shortest_string)
                             place_of_short_string = list_classes.index(shortest_string)
                             date = dateTags[place_of_short_string].text
@@ -479,63 +480,18 @@ def setTitleForWord(str):
 
 
 
-
-
-
-def valid(topic):#validation of search word
-    if(topic=="" or topic=="$"): #or topic=="תכניס נושא לחיפוש"  sometimes there are post for this topic
-        return 1
-    return 0
-
-def find_min(list_search):#a function to find the minimum out of a list of classes bcs the smallest strings returns the date of post
-
-    x = "l94mrbxd.aenfhxwr.myohyog2.b6zbclly.l9j0dhe7.sdhka5h4.nw7X6Rf if you see this autput probably its a new acount"
-    for i in list_search:
-        if (len(i) < len(x)):#the min string frome the list
-            x = i
-            if (x.endswith('h4') == True):#this is for if thre are few posts at the same page so it will bring  the first
-                return x
-    if(x.endswith('h4')==True):#if it is the date path return because usually it shorter then the others
-        return x
-    else:
-        for right in list_search:#if the date path is longer than the others
-            if(right.endswith('h4')==True):
-                return right
-    return x
-
-
-
-
-
-
 def insert_post(k,posts_details,search_topic):#insert the post choosen to the saved
     global comments
     global currUser
     comment_text=comments[k-2].get("1.0", "end")
-    conn = sqlite3.connect('images/projectManagment.db')
     try:
-        cursor = conn.execute(f"SELECT link,UserName FROM posts  WHERE link='{posts_details[0][k-2]}' AND UserName='{currUser}'");#if the post saved
-        help = cursor.fetchall()[0]
-        a=help[1]
+        db.try_exist_post(posts_details[0][k-2],currUser)
         q=messagebox.askquestion("Error", "This post is already saved do you want to delete the old and save the new")
         if(q=="yes"):
-            conn.execute(f"DELETE from posts WHERE link = '{posts_details[0][k-2]}' AND UserName='{currUser}'");
-
-            conn.execute(
-                "INSERT INTO posts (id,link,writer,date,content,comment,subject,username) VALUES (?,?,?,?,?,?,?,?)", (
-                    None, posts_details[0][k - 2], posts_details[1][k - 2], posts_details[2][k - 2],
-                    posts_details[3][k - 2],
-                    comment_text, search_topic, currUser));
-            conn.commit()
-
+            db.insert_post_again(k,posts_details,search_topic,currUser,comment_text)
     except:
-        conn.execute("INSERT INTO posts (id,link,writer,date,content,comment,subject,username) VALUES (?,?,?,?,?,?,?,?)", (
-        None, posts_details[0][k - 2], posts_details[1][k - 2], posts_details[2][k - 2], posts_details[3][k - 2],
-        comment_text, search_topic, currUser));
-        conn.commit()
-    conn.close()
+        db.insert_post(k,posts_details,search_topic,currUser,comment_text)
 
-    print(k)
 
 
 
@@ -543,12 +499,9 @@ def insert_post(k,posts_details,search_topic):#insert the post choosen to the sa
 def store_all_saved():
     global currUser
     reset_page()#delete all the posts from screen
+    listSA=db.store_all_posts(currUser)
+    print_saved(listSA, "$")  # print on screen
 
-    conn = sqlite3.connect('images/projectManagment.db')
-    cursor = conn.execute(f"SELECT * FROM posts  WHERE UserName='{currUser}'");
-
-    print_saved(cursor.fetchall(),"$")#print on screen
-    conn.close()
 
 
 
@@ -589,13 +542,9 @@ def store_all_saved_for_topic(search_topic):
     s += "%"
     global currUser
     reset_page()
+    listS=db.store_posts_for(currUser,s)
+    print_saved(listS, search_topic)
 
-    conn = sqlite3.connect('images/projectManagment.db')
-    cursor = conn.execute(f"SELECT * FROM posts  WHERE UserName='{currUser}' AND subject LIKE '{s}'");
-
-    # print on screen
-    print_saved(cursor.fetchall(),search_topic)
-    conn.close()
 
 def delAllPosts(if_topic):
     s = "%"
@@ -606,13 +555,8 @@ def delAllPosts(if_topic):
                                     'Are you sure you want to  delete all posts')
     if(MsgBox=="yes"):
         global currUser
-        conn = sqlite3.connect('images/projectManagment.db')
-        if(if_topic=="$"):#delete all
-            conn.execute(f"DELETE  FROM posts  WHERE UserName='{currUser}'");
-        else:#delete for topic
-            conn.execute(f"DELETE  FROM posts  WHERE UserName='{currUser}' AND subject LIKE '{s}'");
-        conn.commit()
-        conn.close()
+        db.del_all_posts(if_topic,s,currUser)
+
         reset_page()
 
 
@@ -642,7 +586,7 @@ def print_saved(list_saved,if_topic):
         if (if_topic == "$"):
             setTitleForWord("מציג את כל השמורים")
         else:
-            setTitleForWord(f"מציג את כל השמורים עבור{if_topic}")
+            setTitleForWord(f"   מציג את כל השמורים עבור {if_topic}")
         for i in range(2,2+len(list_saved)):
             link = Button(second_frame, text="קישור לפוסט", bg="lightgray", fg="blue", borderwidth=1,#link doesnt work
                           font=('Helvatical bold', 15), relief="sunken", cursor="hand2",
@@ -738,21 +682,7 @@ def deletePost(link,if_topic,user):
     # make sure he wants to delete it
     MsgBox = messagebox.askquestion('Exit Application', 'Are you sure you want to exit the application')
     if MsgBox == "yes":
-
-        # Create a database or connect to one
-        conn = sqlite3.connect('images/projectManagment.db')
-        # Create cursor
-        c = conn.cursor()
-
-        # Delete a record
-        c.execute(f"DELETE from posts WHERE link = '{link}' AND UserName='{user}'");  # check if it did this AND user=user add----------------------
-
-        # Commit Changes
-        conn.commit()
-
-        # Close Connection
-        conn.close()
-
+        db.dele_post(link,user)
         if (if_topic == "$"):
             store_all_saved()
         else:
@@ -765,20 +695,7 @@ def updatePostComment(comment,link,if_topic,user):
     try:
         print(comment)
         print(link)
-        # Create a database or connect to one
-        conn = sqlite3.connect('images/projectManagment.db')
-        # Create cursor
-        c = conn.cursor()
-
-        # update query to update comment
-        c.execute(f"UPDATE posts set comment = '{comment}' where link = '{link}' AND UserName='{user}'");  # check if it did this
-
-
-        # Commit Changes
-        conn.commit()
-
-        # Close Connection
-        conn.close()
+        db.update_post_comment(comment,link,user)
         if (if_topic == "$"):
             store_all_saved()
         else:
@@ -789,60 +706,24 @@ def updatePostComment(comment,link,if_topic,user):
 
 def add_topic_to_records(search_topic):
     global currUser
-    conn = sqlite3.connect('images/projectManagment.db')
-
-
-
     try:#check if topic exist if not create if yes delete the old and put the new in order to show the most recently
-        curser = conn.execute(
-            f"SELECT topic,UserName FROM topics  WHERE topic='{search_topic}' AND UserName='{currUser}'");
-        help = curser.fetchall()[0]
-        a = help[1]
-        conn.execute(f"DELETE FROM topics  WHERE topic='{search_topic}' AND UserName='{currUser}'");
-        conn.execute("INSERT INTO topics  VALUES (?,?,?)", (None, search_topic, currUser));
-        conn.commit()
-        print("try to save the same word to same user comment for me")
+        db.add_topic_try(search_topic,currUser)
     except:
-        conn.execute("INSERT INTO topics  VALUES (?,?,?)", (None,search_topic,currUser));
-        conn.commit()
-    conn.close()
+        db.add_topic(search_topic, currUser)
+
 
 
 
 def deleteTopic(topic,user):
 
-    # Create a database or connect to one
-    conn = sqlite3.connect('images/projectManagment.db')
-    # Create cursor
-    c = conn.cursor()
-
-    # Delete a record
-    c.execute(f"DELETE from topics WHERE topic = '{topic}' AND UserName='{user}'");  # check if it did this
-
-    # Commit Changes
-    conn.commit()
-
-    # Close Connection
-    conn.close()
+    db.del_topic(topic,user)
     pop.destroy()
     show_search_history()
 
 
 def delete_all_topics():
     global currUser
-    # Create a database or connect to one
-    conn = sqlite3.connect('images/projectManagment.db')
-    # Create cursor
-    c = conn.cursor()
-
-    # Delete a record
-    c.execute(f"DELETE from topics WHERE UserName='{currUser}'");  # check if it did this
-
-    # Commit Changes
-    conn.commit()
-
-    # Close Connection
-    conn.close()
+    db.del_all_topics(currUser)
     pop.destroy()
     show_search_history()
 
@@ -852,14 +733,9 @@ def delete_all_topics():
 def show_search_history():#default value if the call came from top
     global currUser
 
-    # currUser = userPass.getUser()
-    # show all saved topic in a popup
-    conn = sqlite3.connect('images/projectManagment.db')
-    cursor = conn.execute(
-        f"SELECT topic,UserName FROM topics  WHERE UserName='{currUser}' ORDER BY id DESC limit 10");  # last 10   DISTINCT
-    list_res = cursor.fetchall()
 
-    conn.close()
+    # show all saved topic in a popup
+    list_res=db.all_saved_topics(currUser)
 
     print(list_res)  # show in popup
     global pop
@@ -895,7 +771,7 @@ def show_search_history():#default value if the call came from top
     if(len(list_res)>1):
         b = Button(pop, text="deleteAll", fg="black", bg="#f8f9fa", borderwidth=2,
                   font=('Helvatical bold', 15), relief="raised", cursor="hand2",
-                  command=lambda :delete_all_topics())  # command=lambda e=list_saved[i - 2][2] :deletePost(e,if_topic)
+                  command=lambda :delete_all_topics())
 
         b.grid(column=1, row=11, sticky='NESW',pady=(20, 20))
     if(len(list_res)==0):
